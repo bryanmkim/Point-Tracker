@@ -11,6 +11,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        // import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
         
         const firebaseConfig = {
             apiKey: "AIzaSyDqEA3Z-vmY6p6Dy6mVs_aqM8pcebEuCao",
@@ -18,15 +19,20 @@
             projectId: "tournament-point-tracker",
             storageBucket: "tournament-point-tracker.firebasestorage.app",
             messagingSenderId: "116404346685",
-            appId: "1:116404346685:web:6f0cf9e1052b2f62292f54"
-        };
+            appId: "1:116404346685:web:6f0cf9e1052b2f62292f54",
+            measurementId: "G-98R4BKE8SF"
+        };  
         
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
+        // Temporarily disable analytics for debugging
+        // const analytics = getAnalytics(app);
+        
         // Make Firebase available globally
         window.firebaseApp = app;
         window.firestoreDb = db;
+        // window.firebaseAnalytics = analytics;
     </script>
 </head>
 <body>
