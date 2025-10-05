@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Mode - Sunday Epic Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🔐 Admin Mode</h1>
+            <p class="subtitle">Sunday Epic Challenge Management</p>
+            <nav>
+                <button id="homeBtn" class="home-btn">Back to Rankings</button>
+                <button id="logoutBtn" class="logout-btn" style="display: none;">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Login Form -->
+        <section id="loginSection" class="login-section">
+            <div class="login-form">
+                <h2>🔑 Admin Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="password">Enter Admin Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <div id="loginError" class="error-message" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Admin Panel -->
+        <section id="adminPanel" class="admin-panel" style="display: none;">
+            <!-- Add New Player -->
+            <div class="admin-card">
+                <h2>👤 Add New Player</h2>
+                <form id="addPlayerForm">
+                    <div class="form-group">
+                        <label for="playerName">Player Name:</label>
+                        <input type="text" id="playerName" name="playerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="initialPoints">Initial Points (optional):</label>
+                        <input type="number" id="initialPoints" name="initialPoints" value="0" min="0">
+                    </div>
+                    <button type="submit" class="btn btn-success">Add Player</button>
+                </form>
+            </div>
+
+            <!-- Manage Existing Players -->
+            <div class="admin-card">
+                <h2>⚙️ Manage Players</h2>
+                <div id="adminPlayersList" class="admin-players-list">
+                    <div class="no-players">
+                        <p>No players added yet. Add your first player above!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="admin-card">
+                <h2>🚀 Quick Actions</h2>
+                <div class="quick-actions">
+                    <button id="resetAllBtn" class="btn btn-warning">Reset All Scores</button>
+                    <button id="clearDataBtn" class="btn btn-danger">Clear All Data</button>
+                    <button id="exportDataBtn" class="btn btn-info">Export Data</button>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="admin-card">
+                <h2>⚙️ Settings</h2>
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label for="newPassword">Change Admin Password:</label>
+                        <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Sunday Epic Challenge. Admin Panel - Handle with care! 🏸</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

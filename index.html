@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunday Epic Challenge - Badminton Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🏸 Sunday Epic Challenge</h1>
+            <p class="subtitle">Badminton Tournament Tracker</p>
+            <nav>
+                <button id="adminBtn" class="admin-btn">Admin Mode</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="leaderboard">
+            <h2>🏆 Current Rankings</h2>
+            <div class="leaderboard-container">
+                <div id="playersList" class="players-list">
+                    <div class="no-players">
+                        <p>No players added yet!</p>
+                        <p>Use Admin Mode to add players and start tracking scores.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <h3>Total Players</h3>
+                <span id="totalPlayers" class="stat-number">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Games Played</h3>
+                <span id="totalGames" class="stat-number">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Leader</h3>
+                <span id="currentLeader" class="stat-text">-</span>
+            </div>
+        </section>
+
+        <section class="recent-updates">
+            <h2>📈 Recent Updates</h2>
+            <div id="recentUpdates" class="updates-list">
+                <p class="no-updates">No recent score updates</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Sunday Epic Challenge. Keep playing, keep winning! 🏸</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
