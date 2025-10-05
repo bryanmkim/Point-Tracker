@@ -6,6 +6,28 @@
     <title>Sunday Epic Challenge - Badminton Tracker</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqEA3Z-vmY6p6Dy6mVs_aqM8pcebEuCao",
+            authDomain: "tournament-point-tracker.firebaseapp.com",
+            projectId: "tournament-point-tracker",
+            storageBucket: "tournament-point-tracker.firebasestorage.app",
+            messagingSenderId: "116404346685",
+            appId: "1:116404346685:web:6f0cf9e1052b2f62292f54"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // Make Firebase available globally
+        window.firebaseApp = app;
+        window.firestoreDb = db;
+    </script>
 </head>
 <body>
     <header>
@@ -60,6 +82,7 @@
         </div>
     </footer>
 
+    <script src="firebase-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

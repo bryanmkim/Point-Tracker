@@ -1,18 +1,50 @@
 // Data Management
 class SundayChallengeTracker {
     constructor() {
-        this.players = this.loadPlayers();
-        this.adminPassword = this.loadAdminPassword();
+        this.players = [];
+        this.adminPassword = 'admin123';
         this.isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
-        this.recentUpdates = this.loadRecentUpdates();
+        this.recentUpdates = [];
+        this.dataLoaded = false;
         this.init();
     }
 
     // Initialize the application
-    init() {
+    async init() {
+        // Load data from Firebase first
+        await this.loadAllData();
+        
         this.setupEventListeners();
         this.updateDisplay();
         this.checkAdminStatus();
+    }
+
+    // Load all data from Firebase
+    async loadAllData() {
+        try {
+            console.log('Loading data from Firebase...');
+            
+            // Load all data in parallel
+            const [players, adminPassword, recentUpdates] = await Promise.all([
+                this.loadPlayers(),
+                this.loadAdminPassword(),
+                this.loadRecentUpdates()
+            ]);
+            
+            this.players = players;
+            this.adminPassword = adminPassword;
+            this.recentUpdates = recentUpdates;
+            this.dataLoaded = true;
+            
+            console.log('All data loaded successfully from Firebase');
+        } catch (error) {
+            console.error('Error loading data:', error);
+            // Set defaults if loading fails
+            this.players = [];
+            this.adminPassword = 'admin123';
+            this.recentUpdates = [];
+            this.dataLoaded = true;
+        }
     }
 
     // Event Listeners Setup
@@ -92,45 +124,113 @@ class SundayChallengeTracker {
     }
 
     // Data Persistence
-    loadPlayers() {
-        const stored = localStorage.getItem('sundayChallengePlayers');
-        return stored ? JSON.parse(stored) : [];
+    async loadPlayers() {
+        try {
+            const data = await window.firebaseManager.loadData('tournament', 'players');
+            return data ? data.players || [] : [];
+        } catch (error) {
+            console.error('Error loading players from Firebase:', error);
+            // Fallback to localStorage if Firebase fails
+            const stored = localStorage.getItem('sundayChallengePlayers');
+            return stored ? JSON.parse(stored) : [];
+        }
     }
 
-    savePlayers() {
-        localStorage.setItem('sundayChallengePlayers', JSON.stringify(this.players));
+    async savePlayers() {
+        try {
+            const success = await window.firebaseManager.saveData('tournament', 'players', {
+                players: this.players,
+                lastUpdated: new Date().toISOString()
+            });
+            
+            if (success) {
+                console.log('Players saved to Firebase successfully');
+            } else {
+                throw new Error('Failed to save to Firebase');
+            }
+        } catch (error) {
+            console.error('Error saving players to Firebase:', error);
+            // Fallback to localStorage if Firebase fails
+            localStorage.setItem('sundayChallengePlayers', JSON.stringify(this.players));
+        }
     }
 
-    loadAdminPassword() {
-        const stored = localStorage.getItem('sundayChallengeAdminPassword');
-        return stored || 'admin123'; // Default password
+    async loadAdminPassword() {
+        try {
+            const data = await window.firebaseManager.loadData('tournament', 'settings');
+            return data ? data.adminPassword || 'admin123' : 'admin123';
+        } catch (error) {
+            console.error('Error loading admin password from Firebase:', error);
+            // Fallback to localStorage if Firebase fails
+            const stored = localStorage.getItem('sundayChallengeAdminPassword');
+            return stored || 'admin123';
+        }
     }
 
-    saveAdminPassword(password) {
-        localStorage.setItem('sundayChallengeAdminPassword', password);
-        this.adminPassword = password;
+    async saveAdminPassword(password) {
+        try {
+            const success = await window.firebaseManager.saveData('tournament', 'settings', {
+                adminPassword: password,
+                lastUpdated: new Date().toISOString()
+            });
+            
+            if (success) {
+                this.adminPassword = password;
+                console.log('Admin password saved to Firebase successfully');
+            } else {
+                throw new Error('Failed to save password to Firebase');
+            }
+        } catch (error) {
+            console.error('Error saving admin password to Firebase:', error);
+            // Fallback to localStorage if Firebase fails
+            localStorage.setItem('sundayChallengeAdminPassword', password);
+            this.adminPassword = password;
+        }
     }
 
-    loadRecentUpdates() {
-        const stored = localStorage.getItem('sundayChallengeRecentUpdates');
-        return stored ? JSON.parse(stored) : [];
+    async loadRecentUpdates() {
+        try {
+            const data = await window.firebaseManager.loadData('tournament', 'updates');
+            return data ? data.updates || [] : [];
+        } catch (error) {
+            console.error('Error loading recent updates from Firebase:', error);
+            // Fallback to localStorage if Firebase fails
+            const stored = localStorage.getItem('sundayChallengeRecentUpdates');
+            return stored ? JSON.parse(stored) : [];
+        }
     }
 
-    saveRecentUpdates() {
+    async saveRecentUpdates() {
         // Keep only the last 10 updates
         if (this.recentUpdates.length > 10) {
             this.recentUpdates = this.recentUpdates.slice(-10);
         }
-        localStorage.setItem('sundayChallengeRecentUpdates', JSON.stringify(this.recentUpdates));
+        
+        try {
+            const success = await window.firebaseManager.saveData('tournament', 'updates', {
+                updates: this.recentUpdates,
+                lastUpdated: new Date().toISOString()
+            });
+            
+            if (success) {
+                console.log('Recent updates saved to Firebase successfully');
+            } else {
+                throw new Error('Failed to save updates to Firebase');
+            }
+        } catch (error) {
+            console.error('Error saving recent updates to Firebase:', error);
+            // Fallback to localStorage if Firebase fails
+            localStorage.setItem('sundayChallengeRecentUpdates', JSON.stringify(this.recentUpdates));
+        }
     }
 
-    addRecentUpdate(text) {
+    async addRecentUpdate(text) {
         const update = {
             text: text,
             timestamp: new Date().toLocaleString()
         };
         this.recentUpdates.push(update);
-        this.saveRecentUpdates();
+        await this.saveRecentUpdates();
     }
 
     // Authentication
@@ -189,7 +289,7 @@ class SundayChallengeTracker {
     }
 
     // Player Management
-    handleAddPlayer() {
+    async handleAddPlayer() {
         const playerName = document.getElementById('playerName').value.trim();
         const initialPoints = parseInt(document.getElementById('initialPoints').value) || 0;
 
@@ -213,8 +313,8 @@ class SundayChallengeTracker {
         };
 
         this.players.push(newPlayer);
-        this.savePlayers();
-        this.addRecentUpdate(`Added new player: ${playerName} with ${initialPoints} points`);
+        await this.savePlayers();
+        await this.addRecentUpdate(`Added new player: ${playerName} with ${initialPoints} points`);
 
         // Clear form
         document.getElementById('playerName').value = '';
@@ -224,7 +324,7 @@ class SundayChallengeTracker {
         this.showSuccessMessage('Player added successfully!');
     }
 
-    updatePlayerPoints(playerId, pointsChange) {
+    async updatePlayerPoints(playerId, pointsChange) {
         const player = this.players.find(p => p.id === playerId);
         if (!player) return;
 
@@ -232,25 +332,25 @@ class SundayChallengeTracker {
         player.points = Math.max(0, player.points + pointsChange);
         player.gamesPlayed++;
 
-        this.savePlayers();
-        this.addRecentUpdate(`${player.name}: ${oldPoints} → ${player.points} points (${pointsChange > 0 ? '+' : ''}${pointsChange})`);
+        await this.savePlayers();
+        await this.addRecentUpdate(`${player.name}: ${oldPoints} → ${player.points} points (${pointsChange > 0 ? '+' : ''}${pointsChange})`);
         this.updateAdminDisplay();
     }
 
-    deletePlayer(playerId) {
+    async deletePlayer(playerId) {
         const player = this.players.find(p => p.id === playerId);
         if (!player) return;
 
         if (confirm(`Are you sure you want to delete ${player.name}? This action cannot be undone.`)) {
             this.players = this.players.filter(p => p.id !== playerId);
-            this.savePlayers();
-            this.addRecentUpdate(`Deleted player: ${player.name}`);
+            await this.savePlayers();
+            await this.addRecentUpdate(`Deleted player: ${player.name}`);
             this.updateAdminDisplay();
         }
     }
 
     // Password Management
-    handlePasswordChange() {
+    async handlePasswordChange() {
         const newPassword = document.getElementById('newPassword').value.trim();
         const confirmPassword = document.getElementById('confirmPassword').value.trim();
 
@@ -269,34 +369,34 @@ class SundayChallengeTracker {
             return;
         }
 
-        this.saveAdminPassword(newPassword);
+        await this.saveAdminPassword(newPassword);
         document.getElementById('newPassword').value = '';
         document.getElementById('confirmPassword').value = '';
         this.showSuccessMessage('Password updated successfully!');
     }
 
     // Quick Actions
-    resetAllScores() {
+    async resetAllScores() {
         if (confirm('Are you sure you want to reset all player scores to 0? This cannot be undone.')) {
             this.players.forEach(player => {
                 player.points = 0;
                 player.gamesPlayed = 0;
             });
-            this.savePlayers();
-            this.addRecentUpdate('All player scores have been reset to 0');
+            await this.savePlayers();
+            await this.addRecentUpdate('All player scores have been reset to 0');
             this.updateAdminDisplay();
             this.showSuccessMessage('All scores have been reset!');
         }
     }
 
-    clearAllData() {
+    async clearAllData() {
         if (confirm('Are you sure you want to delete ALL data including players, scores, and history? This cannot be undone!')) {
             if (confirm('This will permanently delete everything. Are you absolutely sure?')) {
                 this.players = [];
                 this.recentUpdates = [];
-                this.savePlayers();
-                this.saveRecentUpdates();
-                this.addRecentUpdate('All data has been cleared');
+                await this.savePlayers();
+                await this.saveRecentUpdates();
+                await this.addRecentUpdate('All data has been cleared');
                 this.updateAdminDisplay();
                 this.showSuccessMessage('All data has been cleared!');
             }
@@ -445,7 +545,6 @@ class SundayChallengeTracker {
                 </div>
                 <div class="admin-player-controls">
                     <input type="number" class="point-input" id="points-${player.id}" placeholder="Points" min="1" max="100" value="1">
-                    <input type="number" class="game_input" id="gamesPlayed-${player.id}" placeholder="Games" min="1" max="100" value="1">
 
                     <button class="control-btn add-points" onclick="tracker.updatePlayerPoints('${player.id}', parseInt(document.getElementById('points-${player.id}').value) || 1)">
                         + Add
