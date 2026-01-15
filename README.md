@@ -1,7 +1,4 @@
-# 🏸 Sunday Epic Challenge - Badminton Tracker
-
-A web application to track points and rankings for your badminton game nights!
-
+# 🏸 Badminton Tournament Point Tracker
 ## Features
 
 - **Live Rankings**: Real-time leaderboard with player rankings
@@ -59,23 +56,6 @@ SundayChallengeTracker/
 - Players can't go below 0 points
 - Each score change counts as a "game played"
 
-### Data Management
-- All data is stored locally in your browser
-- Use "Export Data" to backup your tournament
-- "Clear All Data" will permanently delete everything
-
-## Browser Compatibility
-
-Works with all modern browsers:
-- Chrome/Edge (recommended)
-- Firefox
-- Safari
-- Mobile browsers
-
-## Security Note
-
-This is designed for local use. The admin password is stored in browser localStorage. For production use with sensitive data, additional security measures would be recommended.
-
 ## Troubleshooting
 
 **Can't access Admin Mode?**
@@ -90,7 +70,3 @@ This is designed for local use. The admin password is stored in browser localSto
 - Open browser developer tools
 - Go to Application > Local Storage
 - Delete `sundayChallengeAdminPassword` to reset to `admin123`
-
-## Have Fun!
-
-Enjoy your Sunday Epic Challenge badminton tournaments! 🏸🏆
