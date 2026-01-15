@@ -1,4 +1,4 @@
-# 🏸 Badminton Tournament Point Tracker
+# Badminton Tournament Point Tracker
 ## Features
 
 - **Live Rankings**: Real-time leaderboard with player rankings
